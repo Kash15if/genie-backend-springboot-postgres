@@ -10,13 +10,13 @@ import postgrescrud.crud.entity.User;
 public interface AdminDao {
      
 
-     public void createPage(String pageId, String pageLabel, Object structure) throws SQLException;
+     public void createPage(String pageId, String pageLabel, String structure) throws SQLException;
 
     public void updatePage(String pageId, String pageLabel, Object structure) throws SQLException;
 
     public void deletePage(String pageId) throws SQLException;
 
-    public void updateComponent(String pageId, String componentId, String compLabel, Object data, Object compStyles ) throws SQLException;
+    public void updateComponent(String pageId, String componentId, String compLabel, String data, String compStyles ) throws SQLException;
 
     public void deleteComponent(String pageId, String compronentId ) throws SQLException;
 

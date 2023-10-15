@@ -1,10 +1,12 @@
 package postgrescrud.crud.controller;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,12 +36,13 @@ public class AdminController {
     
     
    @PostMapping(value="createpage")
-   public Map<String, String> createPage(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> createPage(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+        adminDao.createPage((String) body.get("pageId"), (String) body.get("pageLabel"), (String) body.get("structure"));
+        return ResponseEntity.ok("Data inserted successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -51,12 +54,13 @@ public class AdminController {
 
    
     @PostMapping(value="update-pagestructure")
-   public Map<String, String> updatePage(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> updatePage(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+      adminDao.updatePage((String) body.get("pageId"), (String) body.get("pageLabel"), (String) body.get("structure"));
+        return ResponseEntity.ok("Data updated successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -66,12 +70,13 @@ public class AdminController {
    }
 
     @PostMapping(value="delete-page")
-   public Map<String, String> deletePage(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> deletePage(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+          adminDao.deletePage((String) body.get("pageId"));
+    return ResponseEntity.ok("Data deleted successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -81,12 +86,13 @@ public class AdminController {
    }
 
     @PostMapping(value="update-component")
-   public Map<String, String> updateComponent(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> updateComponent(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+        adminDao.updateComponent((String) body.get("pageId"), (String) body.get("componentId"), (String) body.get("compLabel"),(String) body.get("data"), (String) body.get("compStyles"));
+    return ResponseEntity.ok("Data updated successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -96,13 +102,15 @@ public class AdminController {
    }
 
     @PostMapping(value="delete-component")
-   public Map<String, String> deleteComponent(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> deleteComponent(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
-    }
+     adminDao.deleteComponent((String) body.get("pageId"), (String) body.get("componentId"));
+    return ResponseEntity.ok("Data deleted successfully");
+  
+}
     catch(Exception e){
         e.printStackTrace();
     }
@@ -113,12 +121,13 @@ public class AdminController {
 
 
     @PostMapping(value="create-user")
-   public Map<String, String> createUser(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> createUser(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+        adminDao.createUser((String) body.get("uid"), (String) body.get("password"), (String) body.get("name"),(String) body.get("clientId"), (String) body.get("email"));
+    return ResponseEntity.ok("User Created successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -129,12 +138,14 @@ public class AdminController {
 
    
     @PostMapping(value="update-user")
-   public Map<String, String> updateUser(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> updateUser(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+    adminDao.updateUser((String) body.get("uid"), (String) body.get("password"), (String) body.get("name"),(String) body.get("clientId"), (String) body.get("email"));
+ 
+    return ResponseEntity.ok("User Updated successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -146,12 +157,14 @@ public class AdminController {
 
    
     @PostMapping(value="delete-user")
-   public Map<String, String> deleteUser(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> deleteUser(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
-        // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+        // String uid = security.validateToken(token);    
+        adminDao.deleteUser((String) body.get("uid"));
+ 
+    return ResponseEntity.ok("User Deleted successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -163,12 +176,12 @@ public class AdminController {
 
    
     @GetMapping(value="users")
-   public Map<String, String> getUsers(@RequestBody Map<String, Object>  body) {
+   public List<Map<String, Object>> getUsers(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+       return adminDao.getUsers();
     }
     catch(Exception e){
         e.printStackTrace();
@@ -178,12 +191,12 @@ public class AdminController {
    }
 
    @GetMapping(value="pages")
-   public Map<String, String> getPages(@RequestBody Map<String, Object>  body) {
+   public List<Map<String, Object>> getPages(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+       return adminDao.getPages();
     }
     catch(Exception e){
         e.printStackTrace();
@@ -194,12 +207,26 @@ public class AdminController {
 
    
    @PostMapping(value="assign-pages")
-   public Map<String, String> assignPages(@RequestBody Map<String, Object>  body) {
+   public ResponseEntity<String> assignPages(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+
+        String pages = (String) body.get("pages");
+        String[] tempArrayPages = new String[0];
+
+        if (pages != null && pages != "") {
+            tempArrayPages = pages.split(",");
+
+            // Trim leading and trailing whitespace from each element
+            for (int i = 0; i < tempArrayPages.length; i++) {
+                tempArrayPages[i] = tempArrayPages[i].trim();
+            }
+        }
+    adminDao.assignPages((String) body.get("uid"), tempArrayPages);
+ 
+    return ResponseEntity.ok("User Deleted successfully");
     }
     catch(Exception e){
         e.printStackTrace();
@@ -210,12 +237,12 @@ public class AdminController {
 
    
    @GetMapping(value="assign-pages-table")
-   public Map<String, String> pagesAssignation(@RequestBody Map<String, Object>  body) {
+   public List<Map<String, Object>> pagesAssignation(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    //    return userDao.getMenu(uid);
+       return adminDao.pagesAssignation();
     }
     catch(Exception e){
         e.printStackTrace();
