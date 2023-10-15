@@ -7,6 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import postgrescrud.crud.dao.AdminDao;
 import postgrescrud.crud.entity.User;
@@ -16,40 +19,44 @@ public class AdminService implements AdminDao {
 
       @Autowired
     private final JdbcTemplate jdbcCon;
+    private final PlatformTransactionManager transactionManager;
 
 
-    public AdminService(JdbcTemplate jdbcCon) {
+    public AdminService(JdbcTemplate jdbcCon, PlatformTransactionManager transactionManager) {
         this.jdbcCon = jdbcCon;
+        this.transactionManager = transactionManager;
     }
 
 
     // jdbcTemplate.update(sql, col1, col2/*, Add more parameters as needed */);
     @Override
     public void createPage(String pageId, String pageLabel, Object structure) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createPage'");
+        String sql = "INSERT INTO public.pages( pageid, pagelabel, structure) VALUES (?, ?, ?);";
+
+        jdbcCon.update(sql, pageId, pageLabel, structure);
+  
     }
 
     @Override
     public void updatePage(String pageId, String pageLabel, Object structure) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePage'");
+        String sql = "UPDATE public.pages SET pagelabel=?, structure=? WHERE pageid=?;";
+        jdbcCon.update(sql, pageLabel, structure, pageId);
     }
 
     @Override
     public void deletePage(String pageId) throws SQLException {
-        String sql = "DELETE FROM public.components\r\n" + //
-                "\tWHERE page_id = ?;\r\n" + //
-                "DELETE FROM public.pages\r\n" + //
-                "\tWHERE pageid = ?;";
+
+         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        String sql = "BEGIN; DELETE FROM public.components WHERE page_id = ?; DELETE FROM public.pages WHERE pageid = ?; COMMIT;";
         jdbcCon.update(sql, pageId, pageId);
+        transactionManager.commit(status);
     }
 
     @Override
-    public void updateComponent(String pageId, String compronentId, String compLabel, Object data,
+    public void updateComponent(String pageId, String componentId, String compLabel, Object data,
             Object compStyles) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateComponent'");
+        String sql = "UPDATE public.components SET  component_label=?, data=?, component_styles=? WHERE page_id=? and component_id=?;";
+        jdbcCon.update(sql, compLabel, data, compStyles, pageId, componentId);
     }
 
     @Override
@@ -60,15 +67,15 @@ public class AdminService implements AdminDao {
     }
 
     @Override
-    public void createUser(User newUser) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+    public void createUser(String uid, String password, String name, String clientId, String email) throws SQLException {
+       String sql = "INSERT INTO public.users( uid, password, name, clientid, email) VALUES (?, ?, ?, ?, ?);";
+        jdbcCon.update(sql, uid, password, name, clientId, email);
     }
 
     @Override
-    public void updateUser(String uid, User updatedUser) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+    public void updateUser(String uid, String password, String name, String clientId, String email) throws SQLException {
+        String sql = "UPDATE public.users SET  password=?, name=?, clientid=?, email=? WHERE uid=?;";
+        jdbcCon.update(sql, password, name, clientId, email, uid);
     }
 
     @Override
@@ -89,8 +96,18 @@ public class AdminService implements AdminDao {
 
     @Override
     public void assignPages(String userId, String[] pageIds) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'assignPages'");
+
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+        String sql = "BEGIN; DELETE FROM public.users WHERE  uid=?;";
+
+        for(String pageId: pageIds){
+            sql += "INSERT INTO public.\"pages-uid\"( uid, pageid) VALUES (" + userId + ", " + pageId + ");";
+        }
+        sql += "COMMIT;";
+
+        jdbcCon.update(sql, userId);
+        transactionManager.commit(status);
     }
 
     @Override

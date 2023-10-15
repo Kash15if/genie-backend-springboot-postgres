@@ -16,13 +16,13 @@ public interface AdminDao {
 
     public void deletePage(String pageId) throws SQLException;
 
-    public void updateComponent(String pageId, String compronentId, String compLabel, Object data, Object compStyles ) throws SQLException;
+    public void updateComponent(String pageId, String componentId, String compLabel, Object data, Object compStyles ) throws SQLException;
 
     public void deleteComponent(String pageId, String compronentId ) throws SQLException;
 
-    public void createUser(User newUser) throws SQLException;
+    public void createUser(String uid, String password, String name, String clientId, String email) throws SQLException;
 
-    public void updateUser(String uid, User updatedUser) throws SQLException;
+    public void updateUser(String uid, String password, String name, String clientId, String email) throws SQLException;
 
     public void deleteUser(String uid) throws SQLException;
 
