@@ -107,20 +107,21 @@ public class AdminService implements AdminDao {
 
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
-        String sql = "BEGIN; DELETE FROM public.users WHERE  uid=? ::text;";
+        String sql = "BEGIN; DELETE FROM public.\"pages-uid\" WHERE  uid=? ::text;";
 
         for(String pageId: pageIds){
-            sql += "INSERT INTO public.\"pages-uid\"( uid, pageid) VALUES (" + userId + "::uuid, " + pageId + ");";
+            sql += "INSERT INTO public.\"pages-uid\"( uid, pageid) VALUES ('" + userId + "'::text, '" + pageId + "');";
         }
         sql += "COMMIT;";
 
+        System.out.println(sql);
         jdbcCon.update(sql, userId);
         transactionManager.commit(status);
     }
 
     @Override
     public List<Map<String, Object>> pagesAssignation() throws SQLException {
-        return jdbcCon.queryForList("select * from from public.\"pages-uid\"");
+        return jdbcCon.queryForList("select * from public.\"pages-uid\"");
     }
     
      

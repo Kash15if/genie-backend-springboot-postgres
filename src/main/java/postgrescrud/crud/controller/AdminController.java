@@ -226,7 +226,7 @@ public class AdminController {
         }
     adminDao.assignPages((String) body.get("uid"), tempArrayPages);
  
-    return ResponseEntity.ok("User Deleted successfully");
+    return ResponseEntity.ok("Pages assigned successfully");
     }
     catch(Exception e){
         e.printStackTrace();
