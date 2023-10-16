@@ -126,7 +126,7 @@ public class AdminController {
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-        adminDao.createUser((String) body.get("uid"), (String) body.get("password"), (String) body.get("name"),(String) body.get("clientId"), (String) body.get("email"));
+        adminDao.createUser((String) body.get("uid"), (String) body.get("password"), (String) body.get("name"),(String) body.get("clientid"), (String) body.get("email"));
     return ResponseEntity.ok("User Created successfully");
     }
     catch(Exception e){
@@ -143,7 +143,7 @@ public class AdminController {
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-    adminDao.updateUser((String) body.get("uid"), (String) body.get("password"), (String) body.get("name"),(String) body.get("clientId"), (String) body.get("email"));
+    adminDao.updateUser((String) body.get("uid"), (String) body.get("password"), (String) body.get("name"),(String) body.get("clientid"), (String) body.get("email"));
  
     return ResponseEntity.ok("User Updated successfully");
     }
@@ -176,7 +176,7 @@ public class AdminController {
 
    
     @GetMapping(value="users")
-   public List<Map<String, Object>> getUsers(@RequestBody Map<String, Object>  body) {
+   public List<Map<String, Object>> getUsers() {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
@@ -205,6 +205,26 @@ public class AdminController {
     return null;
    }
 
+
+   @PostMapping(value="delete-assign-pages")
+   public ResponseEntity<String> deleteAssignPages(@RequestBody Map<String, Object>  body) {
+
+        try{  
+    // String token = authorizationHeader.substring("Bearer ".length());
+        // String uid = security.validateToken(token);
+
+    adminDao.deletessignPages((String) body.get("uid"));
+ 
+    return ResponseEntity.ok("Pages assigned successfully");
+    }
+    catch(Exception e){
+        e.printStackTrace();
+    }
+
+    return null;
+   }
+
+
    
    @PostMapping(value="assign-pages")
    public ResponseEntity<String> assignPages(@RequestBody Map<String, Object>  body) {
@@ -214,10 +234,11 @@ public class AdminController {
         // String uid = security.validateToken(token);
 
         String pages = (String) body.get("pages");
+        System.out.println(pages);
         String[] tempArrayPages = new String[0];
 
         if (pages != null && pages != "") {
-            tempArrayPages = pages.split(",");
+            tempArrayPages = pages.split(", ");
 
             // Trim leading and trailing whitespace from each element
             for (int i = 0; i < tempArrayPages.length; i++) {
@@ -237,7 +258,7 @@ public class AdminController {
 
    
    @GetMapping(value="assign-pages-table")
-   public List<Map<String, Object>> pagesAssignation(@RequestBody Map<String, Object>  body) {
+   public List<Map<String, Object>> pagesAssignation() {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());

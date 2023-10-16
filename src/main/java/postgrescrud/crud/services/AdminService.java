@@ -76,8 +76,8 @@ public class AdminService implements AdminDao {
 
     @Override
     public void createUser(String uid, String password, String name, String clientId, String email) throws SQLException {
-       String sql = "INSERT INTO public.users( uid, password, name, clientid, email) VALUES (? ::uuid, ?, ?, ?, ?);";
-        jdbcCon.update(sql, uid, password, name, clientId, email);
+       String sql = "INSERT INTO public.users( uid, password, name, clientid, email) VALUES ((SELECT uuid_generate_v4()) ::uuid, ?, ?, ?, ?);";
+        jdbcCon.update(sql,  password, name, clientId, email);
     }
 
     @Override
@@ -121,7 +121,15 @@ public class AdminService implements AdminDao {
 
     @Override
     public List<Map<String, Object>> pagesAssignation() throws SQLException {
-        return jdbcCon.queryForList("select * from public.\"pages-uid\"");
+        return jdbcCon.queryForList("SELECT uid, STRING_AGG(pageid::TEXT, ', ') AS pages FROM \"pages-uid\" GROUP BY uid;");
+    }
+
+
+    @Override
+    public void deletessignPages(String uid) {
+        
+         jdbcCon.update("delete from \"pages-uid\" where uid = ?" ,  uid);
+   
     }
     
      

@@ -34,4 +34,6 @@ public interface AdminDao {
 
     public List<Map<String, Object>> pagesAssignation() throws SQLException;
 
+    public void deletessignPages(String uid);
+
     }
