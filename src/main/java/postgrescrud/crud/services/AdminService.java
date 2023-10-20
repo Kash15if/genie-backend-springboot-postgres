@@ -30,13 +30,12 @@ public class AdminService implements AdminDao {
 
     // jdbcTemplate.update(sql, col1, col2/*, Add more parameters as needed */);
     @Override
-    public void createPage(String pageId, String pageLabel, String structure) throws SQLException {
+    public void createPage( String pageLabel, String structure) throws SQLException {
 
-        System.out.println(pageId);
         System.out.println(structure);
-        String sql = "INSERT INTO public.pages( pageid, pagelabel, structure) VALUES (?, ?, ? :: json);";
+        String sql = "INSERT INTO public.pages( pageid, pagelabel, structure) VALUES ((select uuid_generate_v4()), ?, ? :: json);";
 
-        jdbcCon.update(sql, pageId, pageLabel, structure);
+        jdbcCon.update(sql, pageLabel, structure);
   
     }
 
@@ -121,7 +120,7 @@ public class AdminService implements AdminDao {
 
     @Override
     public List<Map<String, Object>> pagesAssignation() throws SQLException {
-        return jdbcCon.queryForList("SELECT uid, STRING_AGG(pageid::TEXT, ', ') AS pages FROM \"pages-uid\" GROUP BY uid;");
+        return jdbcCon.queryForList("SELECT table1.uid, table1.name, STRING_AGG(table1.pageid::TEXT, ', ') AS pages from (SELECT uss.uid,uss.name, pageid FROM public.users as uss left join \"pages-uid\" as pages on uss.uid = pages.uid::uuid) as table1 group by table1.uid, table1.name;");
     }
 
 
@@ -131,6 +130,18 @@ public class AdminService implements AdminDao {
          jdbcCon.update("delete from \"pages-uid\" where uid = ?" ,  uid);
    
     }
+
+
+    @Override
+    public List<Map<String, Object>> getPageStructure(String pageId) {
+        return jdbcCon.queryForList("SELECT pageid, pagelabel, structure FROM public.pages where pageid = ?;", pageId);
+   }
+
+
+    @Override
+    public List<Map<String, Object>> getComponent(String pageId,  String compId) {
+        return jdbcCon.queryForList("SELECT page_id, component_id, component_label, data, component_styles FROM public.components where page_id = ? and component_id = ?;", pageId, compId);
+     }
     
      
 }

@@ -10,11 +10,13 @@ import postgrescrud.crud.entity.User;
 public interface AdminDao {
      
 
-     public void createPage(String pageId, String pageLabel, String structure) throws SQLException;
+     public void createPage( String pageLabel, String structure) throws SQLException;
 
     public void updatePage(String pageId, String pageLabel, Object structure) throws SQLException;
 
     public void deletePage(String pageId) throws SQLException;
+
+    public List<Map<String, Object>> getComponent(String pageId, String compId);
 
     public void updateComponent(String pageId, String componentId, String compLabel, String data, String compStyles ) throws SQLException;
 
@@ -35,5 +37,7 @@ public interface AdminDao {
     public List<Map<String, Object>> pagesAssignation() throws SQLException;
 
     public void deletessignPages(String uid);
+
+    public List<Map<String, Object>> getPageStructure(String pageId);
 
     }

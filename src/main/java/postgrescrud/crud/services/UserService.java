@@ -26,7 +26,7 @@ public class UserService implements UserDao {
 
     @Override
     public List<Map<String, Object>> getMenu(String uid) {
-        return jdbcCon.queryForList("select uid, up.pageid , pagelabel from (SELECT us.uid , pageid FROM public.users as us left join public.\"pages-uid\" as pui on pui.uid = us.uid where us.uid = ?) as up left join public.pages pg on up.pageid = pg.pageid where structure is not null;" , Integer.parseInt(uid));
+        return jdbcCon.queryForList("select uid, up.pageid , pagelabel from (SELECT us.uid , pageid FROM public.users as us left join public.\"pages-uid\" as pui on pui.uid::uuid = us.uid where us.uid = ?::uuid) as up left join public.pages pg on up.pageid = pg.pageid where structure is not null;" , uid);
     //  return jdbcCon.queryForList("SELECT * FROM public.components;");
     }
 

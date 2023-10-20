@@ -41,7 +41,7 @@ public class AdminController {
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
-        adminDao.createPage((String) body.get("pageId"), (String) body.get("pageLabel"), (String) body.get("structure"));
+        adminDao.createPage( (String) body.get("pagelabel"), (String) body.get("structure"));
         return ResponseEntity.ok("Data inserted successfully");
     }
     catch(Exception e){
@@ -51,6 +51,22 @@ public class AdminController {
     return null;
    }
 
+
+    @PostMapping(value="getpage")
+   public  List<Map<String, Object>> getPageStructure(@RequestBody Map<String, Object>  body) {
+
+        try{  
+    // String token = authorizationHeader.substring("Bearer ".length());
+        // String uid = security.validateToken(token);
+        return adminDao.getPageStructure((String) body.get("pageid"));
+        // return ResponseEntity.ok("Data inserted successfully");
+    }
+    catch(Exception e){
+        e.printStackTrace();
+    }
+
+    return null;
+   }
 
    
     @PostMapping(value="update-pagestructure")
@@ -85,12 +101,31 @@ public class AdminController {
     return null;
    }
 
+   @GetMapping(value="component")
+   public List<Map<String, Object>> getComponent( @RequestParam("pageId") String pageId, @RequestParam("compId") String compId) {
+
+        try{  
+    // String token = authorizationHeader.substring("Bearer ".length());
+        // String uid = security.validateToken(token);
+       return  adminDao.getComponent(pageId, compId);
+    
+    }
+    catch(Exception e){
+        e.printStackTrace();
+    }
+
+    return null;
+   }
+
+
     @PostMapping(value="update-component")
    public ResponseEntity<String> updateComponent(@RequestBody Map<String, Object>  body) {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
         // String uid = security.validateToken(token);
+        // System.out.println((String) body.get("pageId")+ " ,,,,,,,,,,,,,,,, " +  (String) body.get("componentId")+ " ,,,,,,,,,,,,,,,, " +  (String) body.get("compLabel")+ " ,,,,,,,,,,,,,,,, " + (String) body.get("data")+ " ,,,,,,,,,,,,,,,, " +  (String) body.get("compStyles"));
+        // System.out.println((String) body.get("data"));
         adminDao.updateComponent((String) body.get("pageId"), (String) body.get("componentId"), (String) body.get("compLabel"),(String) body.get("data"), (String) body.get("compStyles"));
     return ResponseEntity.ok("Data updated successfully");
     }
@@ -191,7 +226,7 @@ public class AdminController {
    }
 
    @GetMapping(value="pages")
-   public List<Map<String, Object>> getPages(@RequestBody Map<String, Object>  body) {
+   public List<Map<String, Object>> getPages() {
 
         try{  
     // String token = authorizationHeader.substring("Bearer ".length());
